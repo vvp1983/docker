@@ -1,0 +1,13 @@
+FROM monitoringartist/zabbix-xxl:latest
+MAINTAINER vvp83@list.ru
+
+RUN  mkdir -p /usr/local/share/zabbix/externalscripts/
+COPY run.sh /usr/local/share/zabbix/externalscripts/
+COPY telegram.sh /usr/local/share/zabbix/externalscripts/
+RUN chown 1000.1000 -R /usr/local/share/zabbix/*
+
+RUN mkdir -p /var/lib/zabbix/ssh_keys/ && mkdir -p /home/zabbix/.ssh
+COPY id_rsa* /var/lib/zabbix/ssh_keys/
+RUN echo "SSHKeyLocation=/var/lib/zabbix/ssh_keys" >> /usr/local/etc/zabbix_server.conf
+RUN chown 1000.1000 -R /var/lib/zabbix/* && chown 1000.1000 -R /home/zabbix
+EXPOSE 80/TCP
